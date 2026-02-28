@@ -604,3 +604,253 @@
     filter: blur(2rem);
     border-radius: 50%;
 }
+
+/* Create Form */
+.lixi-create-main { padding-bottom: 2rem; }
+
+.lixi-create-content { max-width: 960px; margin: 0 auto; }
+
+.lixi-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.lixi-breadcrumb-link {
+    color: rgba(238,43,75,0.7);
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+
+.lixi-breadcrumb-link:hover { text-decoration: underline; }
+
+.lixi-breadcrumb-sep { color: rgba(238,43,75,0.4); font-size: 0.875rem; }
+
+.lixi-breadcrumb-current { color: #1e293b; font-size: 0.875rem; font-weight: 500; }
+
+.lixi-create-header {
+    background: linear-gradient(90deg, rgba(238,43,75,0.1), transparent);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(238,43,75,0.05);
+    margin-bottom: 2rem;
+}
+
+.lixi-create-header-icon { color: var(--lixi-primary); font-size: 2.5rem !important; }
+
+.lixi-create-header h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0.5rem 0;
+}
+
+.lixi-create-header p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.lixi-alert {
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.lixi-alert-danger {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.lixi-alert-success {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.lixi-create-form { padding-bottom: 5rem; }
+
+.lixi-form-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(238,43,75,0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+}
+
+.lixi-form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.lixi-form-section-title .material-symbols-outlined {
+    color: var(--lixi-primary);
+    font-size: 1.5rem !important;
+}
+
+.lixi-form-section-title h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.lixi-form-grid { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.lixi-form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .lixi-form-grid-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+.lixi-form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+.lixi-form-group .required { color: var(--lixi-primary); }
+
+.lixi-form-group input,
+.lixi-form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(238,43,75,0.2);
+    border-radius: 0.75rem;
+    background: rgba(238,43,75,0.05);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.lixi-form-group input:focus,
+.lixi-form-group textarea:focus {
+    outline: none;
+    border-color: var(--lixi-primary);
+}
+
+.lixi-form-group textarea { min-height: 120px; resize: vertical; }
+
+.lixi-input-icon,
+.lixi-input-currency { position: relative; }
+
+.lixi-input-icon .material-symbols-outlined,
+.lixi-input-currency .lixi-currency-symbol {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(238,43,75,0.4);
+    font-weight: 700;
+}
+
+.lixi-input-icon input,
+.lixi-input-currency input {
+    padding-left: 2.75rem;
+}
+
+.lixi-radio-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .lixi-radio-cards { grid-template-columns: 1fr; }
+}
+
+.lixi-radio-card { cursor: pointer; }
+
+.lixi-radio-card input { display: none; }
+
+.lixi-radio-card-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 2px solid rgba(238,43,75,0.1);
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+}
+
+.lixi-radio-card input:checked + .lixi-radio-card-inner {
+    border-color: var(--lixi-primary);
+    background: rgba(238,43,75,0.05);
+}
+
+.lixi-radio-card input:checked + .lixi-radio-card-inner .material-symbols-outlined {
+    color: var(--lixi-primary);
+}
+
+.lixi-radio-card-inner .material-symbols-outlined {
+    color: rgba(238,43,75,0.4);
+    font-size: 1.5rem !important;
+}
+
+.lixi-radio-card-title { font-weight: 700; color: #1e293b; margin: 0 0 0.25rem 0; }
+
+.lixi-radio-card-desc { font-size: 0.75rem; color: #64748b; margin: 0; }
+
+.lixi-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+}
+
+.lixi-btn-secondary {
+    padding: 0.75rem 2rem;
+    border-radius: 0.75rem;
+    color: #64748b;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.lixi-btn-secondary:hover { background: rgba(0,0,0,0.05); }
+
+.lixi-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    background: var(--lixi-primary);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(238,43,75,0.2);
+    transition: all 0.2s;
+}
+
+.lixi-btn-primary:hover { opacity: 0.95; transform: scale(1.02); }
+
+.lixi-create-footer {
+    margin-top: auto;
+    padding: 2.5rem 1rem;
+    border-top: 1px solid rgba(238,43,75,0.1);
+    text-align: center;
+}
+
+.lixi-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: rgba(238,43,75,0.6);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.lixi-footer-copy { font-size: 0.75rem; color: #64748b; margin: 0; }
