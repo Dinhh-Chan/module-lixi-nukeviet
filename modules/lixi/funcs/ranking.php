@@ -13,7 +13,7 @@ if (!defined('NV_IS_MOD_LIXI')) {
     exit('Stop!!!');
 }
 
-global $db, $module_data, $module_name, $page_title, $module_info, $my_head;
+global $db, $module_data, $module_name, $page_title, $module_info, $my_head, $user_info, $db_config;
 
 $page_title = $lang_module['ranking'];
 
@@ -22,8 +22,87 @@ if (file_exists(NV_ROOTDIR . '/themes/' . $module_info['template'] . '/css/lixi.
     $my_head .= '<link rel="stylesheet" href="' . $lixi_css . '">';
 }
 
-$sql = 'SELECT fullname, userid, SUM(amount_received) as total FROM ' . NV_PREFIXLANG . '_' . $module_data . '_participants GROUP BY userid, fullname HAVING total>0 ORDER BY total DESC LIMIT 20';
+$prefix = NV_PREFIXLANG . '_' . $module_data;
+
+$sql = 'SELECT p.fullname, p.userid,
+    SUM(p.amount_received) as total,
+    COUNT(DISTINCT p.event_id) as events_joined,
+    MAX(p.join_time) as last_join_time
+    FROM ' . $prefix . '_participants p
+    GROUP BY p.userid, p.fullname
+    HAVING total>0
+    ORDER BY total DESC
+    LIMIT 50';
 $list = $db->query($sql)->fetchAll();
+
+function lixi_relative_time($timestamp) {
+    if (empty($timestamp)) return '';
+    $diff = NV_CURRENTTIME - $timestamp;
+    if ($diff < 60) return 'Vừa xong';
+    if ($diff < 3600) return floor($diff / 60) . ' phút trước';
+    if ($diff < 86400) return floor($diff / 3600) . ' giờ trước';
+    if ($diff < 172800) return 'Hôm qua';
+    if ($diff < 604800) return floor($diff / 86400) . ' ngày trước';
+    return nv_date('d/m/Y', $timestamp);
+}
+
+$podium = [];
+$table_rows = [];
+
+foreach ($list as $i => $row) {
+    $row['rank'] = $i + 1;
+    $row['fullname'] = nv_htmlspecialchars($row['fullname']);
+    $row['initial'] = mb_strtoupper(mb_substr($row['fullname'], 0, 1));
+    if (empty($row['initial'])) $row['initial'] = '?';
+    $row['total_fmt'] = number_format($row['total'], 0, ',', '.');
+    $row['last_ago'] = lixi_relative_time($row['last_join_time']);
+    $row['events_joined_text'] = str_replace('{n}', $row['events_joined'], $lang_module['events_count']);
+
+    if ($row['userid'] > 0 && defined('NV_USERS_GLOBALTABLE')) {
+        $u = $db->query('SELECT photo FROM ' . NV_USERS_GLOBALTABLE . ' WHERE userid=' . $row['userid'])->fetch();
+        $row['avatar'] = !empty($u['photo']) ? NV_BASE_SITEURL . $u['photo'] : '';
+    } else {
+        $row['avatar'] = '';
+    }
+    $row['avatar_style'] = !empty($row['avatar']) ? 'background-image:url(\'' . str_replace("'", "\\'", $row['avatar']) . '\')' : '';
+
+    if ($i < 3) {
+        $podium[] = $row;
+    } else {
+        $table_rows[] = $row;
+    }
+}
+
+$stats = [
+    'total_distributed' => $db->query('SELECT COALESCE(SUM(amount_received),0) FROM ' . $prefix . '_participants')->fetchColumn(),
+    'total_participants' => $db->query('SELECT COUNT(*) FROM ' . $prefix . '_participants')->fetchColumn(),
+    'events_hosted' => $db->query('SELECT COUNT(*) FROM ' . $prefix . '_events')->fetchColumn(),
+    'avg_amount' => 0
+];
+$stats['total_distributed_fmt'] = number_format($stats['total_distributed'], 0, ',', '.');
+$stats['total_participants_fmt'] = number_format($stats['total_participants'], 0, ',', '.');
+$stats['events_hosted_fmt'] = number_format($stats['events_hosted'], 0, ',', '.');
+if ($stats['total_participants'] > 0) {
+    $stats['avg_amount'] = round($stats['total_distributed'] / $stats['total_participants']);
+}
+$stats['avg_amount_fmt'] = number_format($stats['avg_amount'], 0, ',', '.');
+
+$user_balance = 0;
+$user_avatar = 'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="%23ddd" cx="50" cy="50" r="50"/></svg>');
+if (defined('NV_IS_USER') && $user_info['userid'] > 0) {
+    $user_balance = $db->query('SELECT COALESCE(SUM(amount_received),0) FROM ' . $prefix . '_participants WHERE userid=' . $user_info['userid'])->fetchColumn();
+    if (!empty($user_info['photo'])) {
+        $user_avatar = NV_BASE_SITEURL . $user_info['photo'];
+    }
+}
+$user_balance_fmt = number_format($user_balance, 0, ',', '.');
+$user_link = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=users&' . NV_OP_VARIABLE . '=login';
+if (defined('NV_IS_USER')) {
+    $user_link = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=users&' . NV_OP_VARIABLE . '=editinfo';
+}
+
+$total_count = count($list);
+$showing_ranking = str_replace(['{n}', '{total}'], [$total_count, $total_count], $lang_module['showing_ranking']);
 
 $template = $module_info['template'];
 if (!file_exists(NV_ROOTDIR . '/themes/' . $template . '/modules/' . $module_info['module_theme'] . '/ranking.tpl')) {
@@ -33,12 +112,30 @@ if (!file_exists(NV_ROOTDIR . '/themes/' . $template . '/modules/' . $module_inf
 $xtpl = new XTemplate('ranking.tpl', NV_ROOTDIR . '/themes/' . $template . '/modules/' . $module_info['module_theme']);
 $xtpl->assign('LANG', $lang_module);
 $xtpl->assign('MENU', nv_theme_lixi_menu('ranking'));
-foreach ($list as $i => $row) {
-    $row['stt'] = $i + 1;
-    $row['total'] = number_format($row['total'], 0, ',', '.');
-    $xtpl->assign('ROW', $row);
-    $xtpl->parse('main.loop');
+$xtpl->assign('STATS', $stats);
+$xtpl->assign('USER_AVATAR', $user_avatar);
+$xtpl->assign('USER_LINK', $user_link);
+$xtpl->assign('USER_BALANCE', $user_balance_fmt);
+$xtpl->assign('SHOWING_RANKING', $showing_ranking);
+
+foreach ([1 => 'silver', 0 => 'gold', 2 => 'bronze'] as $idx => $medal) {
+    if (isset($podium[$idx])) {
+        $p = $podium[$idx];
+        $xtpl->assign('PODIUM_' . strtoupper($medal), $p);
+        $xtpl->parse('main.podium.' . $medal);
+    }
 }
+$xtpl->parse('main.podium');
+
+foreach ($table_rows as $row) {
+    $xtpl->assign('ROW', $row);
+    $xtpl->parse('main.table.loop');
+}
+if (empty($table_rows)) {
+    $xtpl->parse('main.table.empty');
+}
+$xtpl->parse('main.table');
+
 $xtpl->parse('main');
 $contents = $xtpl->text('main');
 

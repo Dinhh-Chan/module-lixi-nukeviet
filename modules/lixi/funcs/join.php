@@ -37,6 +37,8 @@ $page_title = $event['title'];
 
 $num_participants = $db->query('SELECT COUNT(*) FROM ' . NV_PREFIXLANG . '_' . $module_data . '_participants WHERE event_id=' . $event['id'])->fetchColumn();
 $can_join = ($num_participants < $event['num_envelopes']);
+$event['title'] = nv_htmlspecialchars($event['title']);
+$event['description'] = !empty($event['description']) ? nv_htmlspecialchars($event['description']) : 'Điền thông tin bên dưới để nhận phong bì may mắn của bạn!';
 
 $user_already_joined = false;
 if (defined('NV_IS_USER')) {
@@ -86,6 +88,17 @@ if ($can_join and !$user_already_joined and $nv_Request->isset_request('submit',
 
 $base_url = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=' . $module_name . '&' . NV_OP_VARIABLE . '=join&alias=' . $event['alias'];
 
+$user_avatar = 'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="%23ddd" cx="50" cy="50" r="50"/></svg>');
+if (defined('NV_IS_USER') && !empty($user_info['photo'])) {
+    $user_avatar = NV_BASE_SITEURL . $user_info['photo'];
+}
+$user_link = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=users&' . NV_OP_VARIABLE . '=login';
+if (defined('NV_IS_USER')) {
+    $user_link = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=users&' . NV_OP_VARIABLE . '=editinfo';
+}
+
+$banks = ['Vietcombank', 'Techcombank', 'MB Bank', 'Momo'];
+
 $template = $module_info['template'];
 if (!file_exists(NV_ROOTDIR . '/themes/' . $template . '/modules/' . $module_info['module_theme'] . '/join.tpl')) {
     $template = 'default';
@@ -93,7 +106,9 @@ if (!file_exists(NV_ROOTDIR . '/themes/' . $template . '/modules/' . $module_inf
 
 $xtpl = new XTemplate('join.tpl', NV_ROOTDIR . '/themes/' . $template . '/modules/' . $module_info['module_theme']);
 $xtpl->assign('LANG', $lang_module);
-$xtpl->assign('MENU', nv_theme_lixi_menu('join'));
+$xtpl->assign('MENU', nv_theme_lixi_menu('main'));
+$xtpl->assign('USER_AVATAR', $user_avatar);
+$xtpl->assign('USER_LINK', $user_link);
 $xtpl->assign('EVENT', $event);
 $xtpl->assign('BASE_URL', $base_url);
 $xtpl->assign('NUM_PARTICIPANTS', $num_participants);
@@ -103,6 +118,11 @@ $xtpl->assign('SUCCESS', $success);
 $xtpl->assign('RESULT_AMOUNT', number_format($result_amount, 0, ',', '.'));
 $xtpl->assign('ERROR', $error);
 $xtpl->assign('FORM_ACTION', $base_url);
+
+foreach ($banks as $b) {
+    $xtpl->assign('BANK_OPTION', ['value' => $b, 'label' => $b]);
+    $xtpl->parse('main.form.bank_option');
+}
 
 if ($error) {
     $xtpl->parse('main.error');

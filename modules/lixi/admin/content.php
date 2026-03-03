@@ -41,7 +41,7 @@ $action = NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DAT
 
 if ($nv_Request->get_int('save', 'post') == 1) {
     $row['title'] = $nv_Request->get_title('title', 'post', '');
-    $row['description'] = $nv_Request->get_string('description', 'post', '');
+    $row['description'] = strip_tags($nv_Request->get_string('description', 'post', ''));
     $row['max_participants'] = max(1, (int) $nv_Request->get_string('max_participants', 'post', '10'));
     $row['num_envelopes'] = max(1, (int) $nv_Request->get_string('num_envelopes', 'post', '10'));
     $row['amount_type'] = $nv_Request->get_string('amount_type', 'post', 'fixed');
@@ -103,7 +103,10 @@ $row['amount_type_fixed'] = ($row['amount_type'] == 'fixed') ? ' selected' : '';
 $row['amount_type_random'] = ($row['amount_type'] == 'random') ? ' selected' : '';
 $row['status_active'] = $row['status'] ? ' selected' : '';
 $row['status_inactive'] = !$row['status'] ? ' selected' : '';
-$xtpl->assign('DATA', $row);
+$form_data = $row;
+$form_data['title'] = nv_htmlspecialchars($form_data['title']);
+$form_data['description'] = nv_htmlspecialchars($form_data['description']);
+$xtpl->assign('DATA', $form_data);
 $xtpl->assign('ERROR', $error);
 
 if ($row['amount_type'] == 'fixed') {

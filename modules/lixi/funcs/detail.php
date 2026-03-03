@@ -40,6 +40,8 @@ $join_url = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DA
 $num_participants = $db->query('SELECT COUNT(*) FROM ' . NV_PREFIXLANG . '_' . $module_data . '_participants WHERE event_id=' . $event['id'])->fetchColumn();
 $event['num_participants'] = $num_participants;
 $event['join_url'] = $join_url;
+$event['title'] = nv_htmlspecialchars($event['title']);
+$event['description'] = nv_htmlspecialchars($event['description']);
 
 $template = $module_info['template'];
 if (!file_exists(NV_ROOTDIR . '/themes/' . $template . '/modules/' . $module_info['module_theme'] . '/detail.tpl')) {

@@ -14,14 +14,14 @@ if (!defined('NV_ADMIN') or !defined('NV_MAINFILE')) {
 }
 
 $module_version = [
-    'name' => 'Lì xì',
+    'name' => 'Rút thăm may mắn',
     'modfuncs' => 'main,create,join,detail,my_events,history,ranking',
     'is_sysmod' => 0,
     'virtual' => 0,
     'version' => '4.5.07',
     'date' => 'Tuesday, February 25, 2026 12:00:00 AM GMT+07:00',
-    'author' => 'Custom module - Lì xì năm mới',
-    'note' => 'Module lì xì trực tuyến - tạo sự kiện, mời người tham gia, bốc lì xì, xuất Excel',
+    'author' => 'Custom module - Rút thăm may mắn',
+    'note' => 'Module rút thăm may mắn trực tuyến - tạo sự kiện, mời người tham gia, tham gia rút thăm, xuất Excel',
     'uploads_dir' => [
         $module_upload
     ]

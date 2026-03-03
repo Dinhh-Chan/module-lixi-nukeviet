@@ -15,8 +15,6 @@ if (!defined('NV_IS_MOD_LIXI')) {
 
 global $db, $nv_Request, $user_info, $client_info, $module_data, $module_name, $page_title, $lang_module, $lang_global, $module_info, $my_head;
 
-$my_head .= '<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">';
-$my_head .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">';
 $lixi_css = NV_STATIC_URL . 'themes/' . $module_info['template'] . '/css/lixi.css';
 if (file_exists(NV_ROOTDIR . '/themes/' . $module_info['template'] . '/css/lixi.css')) {
     $my_head .= '<link rel="stylesheet" href="' . $lixi_css . '">';
@@ -49,7 +47,7 @@ $success = false;
 
 if ($nv_Request->isset_request('submit', 'post')) {
     $row['title'] = $nv_Request->get_title('title', 'post', '');
-    $row['description'] = $nv_Request->get_string('description', 'post', '');
+    $row['description'] = strip_tags($nv_Request->get_string('description', 'post', ''));
     $row['max_participants'] = max(1, (int) $nv_Request->get_string('max_participants', 'post', '10'));
     $row['num_envelopes'] = max(1, (int) $nv_Request->get_string('num_envelopes', 'post', '10'));
     $row['amount_type'] = $nv_Request->get_string('amount_type', 'post', 'fixed');
@@ -128,7 +126,10 @@ $xtpl->assign('NV_LANG_VARIABLE', NV_LANG_VARIABLE);
 $xtpl->assign('NV_LANG_DATA', NV_LANG_DATA);
 $xtpl->assign('NV_NAME_VARIABLE', NV_NAME_VARIABLE);
 $xtpl->assign('NV_OP_VARIABLE', NV_OP_VARIABLE);
-$xtpl->assign('DATA', $row);
+$form_data = $row;
+$form_data['title'] = nv_htmlspecialchars($form_data['title']);
+$form_data['description'] = nv_htmlspecialchars($form_data['description']);
+$xtpl->assign('DATA', $form_data);
 $xtpl->assign('FORM_ACTION', $base_url);
 $xtpl->assign('ERROR', $error);
 $xtpl->assign('SUCCESS', $success);

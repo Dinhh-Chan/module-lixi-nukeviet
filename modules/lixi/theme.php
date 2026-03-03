@@ -57,6 +57,7 @@ function nv_theme_lixi_main($list, $stats = [], $leaderboard = [], $user_avatar 
         $xtpl->parse('main.empty_events');
     } else {
         foreach ($list as $row) {
+            $row['title'] = nv_htmlspecialchars($row['title']);
             $row['detail_url'] = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=' . $module_name . '&' . NV_OP_VARIABLE . '=detail&alias=' . $row['alias'];
             $row['join_url'] = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=' . $module_name . '&' . NV_OP_VARIABLE . '=join&alias=' . $row['alias'];
             $row['amount_label'] = ($row['amount_type'] == 'fixed') ? number_format($row['amount_fixed'], 0, ',', '.') . ' đ/phong bì' : number_format($row['amount_min'], 0, ',', '.') . '-' . number_format($row['amount_max'], 0, ',', '.') . ' đ';
@@ -83,7 +84,8 @@ function nv_theme_lixi_main($list, $stats = [], $leaderboard = [], $user_avatar 
         foreach ($leaderboard as $i => $row) {
             $row['stt'] = str_pad($i + 1, 2, '0', STR_PAD_LEFT);
             $row['leader_class'] = ($i == 0) ? ' first' : '';
-            $row['initial'] = mb_substr($row['fullname'], 0, 1);
+            $row['initial'] = nv_htmlspecialchars(mb_substr($row['fullname'], 0, 1));
+            $row['fullname'] = nv_htmlspecialchars($row['fullname']);
             $xtpl->assign('LEADER', $row);
             $xtpl->parse('main.leaderboard.loop');
         }

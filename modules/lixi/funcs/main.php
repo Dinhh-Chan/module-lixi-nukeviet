@@ -17,8 +17,6 @@ global $db, $module_data, $page_title, $module_info, $module_name, $my_head, $us
 
 $page_title = $lang_module['lixi_title'];
 
-$my_head .= '<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">';
-$my_head .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">';
 $lixi_css = NV_STATIC_URL . 'themes/' . $module_info['template'] . '/css/lixi.css';
 if (file_exists(NV_ROOTDIR . '/themes/' . $module_info['template'] . '/css/lixi.css')) {
     $my_head .= '<link rel="stylesheet" href="' . $lixi_css . '">';

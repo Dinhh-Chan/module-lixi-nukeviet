@@ -3,9 +3,13 @@
     <header class="lixi-header">
         <div class="lixi-header-brand">
             <div class="lixi-logo">
-                <span class="material-symbols-outlined">redeem</span>
+                <span class="material-symbols-outlined">celebration</span>
             </div>
-            <h2 class="lixi-brand-text">NukeViet <span>Lì xì</span></h2>
+            <h2 class="lixi-brand-text">NukeViet <span>{LANG.lixi_title}</span></h2>
+            <div class="lixi-search">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" placeholder="{LANG.search_events}" disabled>
+            </div>
         </div>
         <div class="lixi-header-actions">
             <nav class="lixi-nav">

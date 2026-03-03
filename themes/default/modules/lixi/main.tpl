@@ -6,7 +6,7 @@
             <div class="lixi-logo">
                 <span class="material-symbols-outlined">celebration</span>
             </div>
-            <h2 class="lixi-brand-text">NukeViet <span>Lì xì</span></h2>
+            <h2 class="lixi-brand-text">NukeViet <span>{LANG.lixi_title}</span></h2>
             <div class="lixi-search">
                 <span class="material-symbols-outlined">search</span>
                 <input type="text" placeholder="{LANG.search_events}" disabled>
@@ -48,7 +48,7 @@
                 <div class="lixi-stat-icon"><span class="material-symbols-outlined">payments</span></div>
                 <div>
                     <p class="lixi-stat-label">{LANG.total_distributed}</p>
-                    <p class="lixi-stat-value">{STATS.total_distributed_fmt} <span style="font-size:0.75rem">VND</span></p>
+                    <p class="lixi-stat-value">{STATS.total_distributed_fmt} <span style="font-size:0.875rem">VND</span></p>
                 </div>
             </div>
             <div class="lixi-stat-card">
