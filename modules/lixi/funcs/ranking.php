@@ -24,11 +24,28 @@ if (file_exists(NV_ROOTDIR . '/themes/' . $module_info['template'] . '/css/lixi.
 
 $prefix = NV_PREFIXLANG . '_' . $module_data;
 
+$events = $db->query('SELECT id, title, alias FROM ' . $prefix . '_events WHERE status=1 ORDER BY add_time DESC')->fetchAll();
+$event_id = $nv_Request->get_int('event_id', 'get', 0);
+$current_event_title = $lang_module['ranking_for_all'];
+if ($event_id > 0) {
+    foreach ($events as $e) {
+        if ((int) $e['id'] === $event_id) {
+            $current_event_title = $e['title'];
+            break;
+        }
+    }
+}
+
+$where = '';
+if ($event_id > 0) {
+    $where = ' WHERE p.event_id=' . $event_id;
+}
+
 $sql = 'SELECT p.fullname, p.userid,
     SUM(p.amount_received) as total,
     COUNT(DISTINCT p.event_id) as events_joined,
     MAX(p.join_time) as last_join_time
-    FROM ' . $prefix . '_participants p
+    FROM ' . $prefix . '_participants p' . $where . '
     GROUP BY p.userid, p.fullname
     HAVING total>0
     ORDER BY total DESC
@@ -68,14 +85,18 @@ foreach ($list as $i => $row) {
 
     if ($i < 3) {
         $podium[] = $row;
-    } else {
-        $table_rows[] = $row;
     }
+    $table_rows[] = $row;
+}
+
+$stats_where = '';
+if ($event_id > 0) {
+    $stats_where = ' WHERE event_id=' . $event_id;
 }
 
 $stats = [
-    'total_distributed' => $db->query('SELECT COALESCE(SUM(amount_received),0) FROM ' . $prefix . '_participants')->fetchColumn(),
-    'total_participants' => $db->query('SELECT COUNT(*) FROM ' . $prefix . '_participants')->fetchColumn(),
+    'total_distributed' => $db->query('SELECT COALESCE(SUM(amount_received),0) FROM ' . $prefix . '_participants' . $stats_where)->fetchColumn(),
+    'total_participants' => $db->query('SELECT COUNT(*) FROM ' . $prefix . '_participants' . $stats_where)->fetchColumn(),
     'events_hosted' => $db->query('SELECT COUNT(*) FROM ' . $prefix . '_events')->fetchColumn(),
     'avg_amount' => 0
 ];
@@ -90,7 +111,11 @@ $stats['avg_amount_fmt'] = number_format($stats['avg_amount'], 0, ',', '.');
 $user_balance = 0;
 $user_avatar = 'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="%23ddd" cx="50" cy="50" r="50"/></svg>');
 if (defined('NV_IS_USER') && $user_info['userid'] > 0) {
-    $user_balance = $db->query('SELECT COALESCE(SUM(amount_received),0) FROM ' . $prefix . '_participants WHERE userid=' . $user_info['userid'])->fetchColumn();
+    $user_balance_sql = 'SELECT COALESCE(SUM(amount_received),0) FROM ' . $prefix . '_participants WHERE userid=' . $user_info['userid'];
+    if ($event_id > 0) {
+        $user_balance_sql .= ' AND event_id=' . $event_id;
+    }
+    $user_balance = $db->query($user_balance_sql)->fetchColumn();
     if (!empty($user_info['photo'])) {
         $user_avatar = NV_BASE_SITEURL . $user_info['photo'];
     }
@@ -103,6 +128,7 @@ if (defined('NV_IS_USER')) {
 
 $total_count = count($list);
 $showing_ranking = str_replace(['{n}', '{total}'], [$total_count, $total_count], $lang_module['showing_ranking']);
+$ranking_for = ($event_id > 0) ? str_replace('{EVENT_TITLE}', nv_htmlspecialchars($current_event_title), $lang_module['ranking_for_event']) : $lang_module['ranking_for_all'];
 
 $template = $module_info['template'];
 if (!file_exists(NV_ROOTDIR . '/themes/' . $template . '/modules/' . $module_info['module_theme'] . '/ranking.tpl')) {
@@ -117,6 +143,20 @@ $xtpl->assign('USER_AVATAR', $user_avatar);
 $xtpl->assign('USER_LINK', $user_link);
 $xtpl->assign('USER_BALANCE', $user_balance_fmt);
 $xtpl->assign('SHOWING_RANKING', $showing_ranking);
+$xtpl->assign('RANKING_FOR', $ranking_for);
+
+$all_url = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=' . $module_name . '&' . NV_OP_VARIABLE . '=ranking';
+$xtpl->assign('FILTER_ALL', ['url' => $all_url]);
+if (!empty($events)) {
+    foreach ($events as $e) {
+        $e['title'] = nv_htmlspecialchars($e['title']);
+        $e['url'] = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=' . $module_name . '&' . NV_OP_VARIABLE . '=ranking&event_id=' . $e['id'];
+        $e['selected'] = ((int) $e['id'] === $event_id) ? ' selected' : '';
+        $xtpl->assign('FILTER_EVENT', $e);
+        $xtpl->parse('main.event_switch.loop');
+    }
+    $xtpl->parse('main.event_switch');
+}
 
 foreach ([1 => 'silver', 0 => 'gold', 2 => 'bronze'] as $idx => $medal) {
     if (isset($podium[$idx])) {
@@ -131,7 +171,7 @@ foreach ($table_rows as $row) {
     $xtpl->assign('ROW', $row);
     $xtpl->parse('main.table.loop');
 }
-if (empty($table_rows)) {
+if (empty($table_rows) && empty($podium)) {
     $xtpl->parse('main.table.empty');
 }
 $xtpl->parse('main.table');

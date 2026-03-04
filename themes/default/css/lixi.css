@@ -134,6 +134,134 @@
     gap: 1rem;
 }
 
+/* Detail/Leaderboard topnav extras */
+.lixi-header-compact .lixi-brand-text {
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.lixi-topnav {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .lixi-topnav {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-left: 1rem;
+    }
+}
+
+.lixi-topnav a {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.lixi-topnav a:hover {
+    color: var(--lixi-primary);
+}
+
+.lixi-topnav a.active {
+    color: var(--lixi-primary);
+    font-weight: 800;
+    border-bottom: 2px solid var(--lixi-primary);
+    padding-bottom: 2px;
+}
+
+.lixi-icon-btns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.lixi-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    background: rgba(238,43,75,0.1);
+    border: 1px solid rgba(238,43,75,0.2);
+    color: var(--lixi-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.lixi-icon-btn:hover {
+    background: rgba(238,43,75,0.2);
+}
+
+.lixi-balance-pill {
+    height: 40px;
+    padding: 0 0.75rem;
+    border-radius: 9999px;
+    background: rgba(238,43,75,0.12);
+    border: 1px solid rgba(238,43,75,0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.lixi-balance-amount {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--lixi-primary);
+}
+
+.lixi-ranking-current {
+    margin-top: 0.75rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.lixi-ranking-switch {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.lixi-ranking-filter-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.lixi-ranking-select {
+    height: 40px;
+    border-radius: 9999px;
+    border: 1px solid rgba(238,43,75,0.2);
+    padding: 0 0.75rem;
+    background: #f8fafc;
+    font-weight: 700;
+    color: #334155;
+}
+
+.lixi-detail-rules {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(238,43,75,0.1);
+}
+
+.lixi-detail-rules-title {
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+}
+
+.lixi-detail-rules-desc {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.6;
+}
+
 .lixi-btn-create {
     display: inline-flex;
     align-items: center;

@@ -1,0 +1,132 @@
+================================================================================
+BẢNG MÔ TẢ CHỨC NĂNG MODULE RÚT THĂM MAY MẮN (LIXI)
+================================================================================
+Tên module: lixi
+Phiên bản module: 4.5.07
+Tài liệu tham khảo: Phân tích module mẫu (thuvienluanvanluanan)
+
+--------------------------------------------------------------------------------
+A. TỔNG QUAN
+--------------------------------------------------------------------------------
+Module Rút thăm may mắn (Lì xì ảo) cho NukeViet CMS 4.x. Cho phép quản trị viên
+và người dùng đã đăng nhập tạo sự kiện rút thăm (số phong bì, loại tiền cố định
+hoặc ngẫu nhiên). Người dùng (có thể khách hoặc thành viên) tham gia bằng cách
+điền form (họ tên, năm sinh, ngân hàng, số tài khoản) và nhận một phần thưởng
+ảo. Module hỗ trợ xem lịch sử tham gia, bảng xếp hạng người may mắn, quản lý
+sự kiện và xuất danh sách người tham gia.
+
+--------------------------------------------------------------------------------
+B. PHÂN TÍCH CHI TIẾT
+--------------------------------------------------------------------------------
+
+I. PHẦN QUẢN TRỊ (Admin)
+--------------------------------------------------------------------------------
+
+STT | NỘI DUNG                    | ĐẶC ĐIỂM
+----|-----------------------------|--------------------------------------------------
+ 1  | Quản lý danh sách sự kiện   | Xem danh sách sự kiện rút thăm may mắn.
+    |                             | Nội dung hiển thị: ID, Tiêu đề, Alias, Số phong bì,
+    |                             | Số người tham gia, Trạng thái, Thời gian tạo/sửa.
+    |                             | Chức năng: Thêm mới, Sửa, Xóa. Phân trang.
+----|-----------------------------|--------------------------------------------------
+ 2  | Thêm / Sửa sự kiện           | Form nhập liệu một sự kiện.
+    |                             | Nội dung quản lý:
+    |                             | - Tiêu đề sự kiện
+    |                             | - Liên kết tĩnh (alias, tự sinh từ tiêu đề)
+    |                             | - Mô tả
+    |                             | - Số người tham gia tối đa / Số phong bì
+    |                             | - Loại phân phối: Cố định (mỗi phong bì cùng số tiền)
+    |                             |   hoặc Ngẫu nhiên (min–max VND)
+    |                             | - Số tiền cố định (VNĐ) hoặc Min/Max (VNĐ)
+    |                             | - Trạng thái (kích hoạt / đình chỉ)
+----|-----------------------------|--------------------------------------------------
+ 3  | Quản lý người tham gia      | Xem danh sách người đã tham gia theo từng sự kiện.
+    |                             | Nội dung: Họ tên, Năm sinh, Ngân hàng, Số tài khoản,
+    |                             | Số tiền nhận, Thời gian tham gia.
+    |                             | Có lọc theo sự kiện, có phân trang.
+----|-----------------------------|--------------------------------------------------
+ 4  | Xuất dữ liệu (Export)       | Xuất danh sách người tham gia ra file Excel/CSV
+    |                             | theo sự kiện được chọn.
+----|-----------------------------|--------------------------------------------------
+
+
+II. PHẦN NGOÀI SITE (Front-end)
+--------------------------------------------------------------------------------
+
+STT | NỘI DUNG                    | ĐẶC ĐIỂM
+----|-----------------------------|--------------------------------------------------
+ 1  | Trang chủ module            | Hiển thị tổng quan: thống kê (tổng đã phát, phong bì…),
+    |                             | danh sách sự kiện đang mở (card: tiêu đề, tiến độ
+    |                             | nhận, số phong bì còn lại, nút Tham gia).
+    |                             | Có bảng xếp hạng (leaderboard) người may mắn.
+----|-----------------------------|--------------------------------------------------
+ 2  | Tạo sự kiện                 | Chỉ thành viên đăng nhập. Form tạo sự kiện:
+    |                             | Tiêu đề, Mô tả, Số phong bì, Loại phân phối (cố định
+    |                             | / ngẫu nhiên), Số tiền hoặc Min–Max, Thời gian bắt đầu
+    |                             | / kết thúc (tùy chọn). Lưu và kích hoạt sự kiện.
+----|-----------------------------|--------------------------------------------------
+ 3  | Trang tham gia (Join)        | URL theo alias sự kiện. Gồm:
+    |                             | - Hero: tên sự kiện, mô tả, nút Thể lệ.
+    |                             | - Layout 2 cột: Trái – hình phong bì đỏ (Lì xì);
+    |                             |   Phải – Form đăng ký: Họ tên*, Năm sinh, Ngân hàng
+    |                             |   (Vietcombank, Techcombank, MB Bank, Momo), Số tài khoản.
+    |                             | - Nút "Nhận lì xì": gửi form, hệ thống random (hoặc
+    |                             |   cố định) số tiền và lưu người tham gia.
+    |                             | - Sau khi tham gia thành công: hiển thị phong bì
+    |                             |   có thể bấm để “mở”, hiển thị số tiền nhận được,
+    |                             |   chúc mừng, nút Chia sẻ kết quả, Xem lịch sử.
+    |                             | Kiểm tra: chưa tham gia, sự kiện còn slot, không
+    |                             | hiển thị form nếu đã đủ người hoặc đã tham gia.
+----|-----------------------------|--------------------------------------------------
+ 4  | Trang chi tiết sự kiện      | Xem thông tin một sự kiện (tiêu đề, mô tả, tiến độ,
+    |                             | link tham gia). Dùng để chia sẻ link tham gia.
+----|-----------------------------|--------------------------------------------------
+ 5  | Sự kiện của tôi              | Chỉ thành viên đăng nhập. Dashboard quản lý các
+    |                             | sự kiện do mình tạo: thống kê (tổng sự kiện, tổng
+    |                             | đã phát, tỷ lệ nhận, phong bì còn lại). Bảng danh
+    |                             | sách: Tên sự kiện, Trạng thái, Đã nhận / Tổng, Tổng
+    |                             | đã phát, Thao tác (Xem, Chia sẻ, Sửa, Xuất Excel).
+----|-----------------------------|--------------------------------------------------
+ 6  | Lịch sử                     | Chỉ thành viên đăng nhập. Danh sách các lần đã
+    |                             | tham gia rút thăm: Sự kiện, Ngày/giờ, Số tiền nhận,
+    |                             | Trạng thái. Có lọc, phân trang.
+----|-----------------------------|--------------------------------------------------
+ 7  | Bảng xếp hạng               | Hiển thị top người nhận nhiều nhất (tổng số tiền
+    |                             | đã nhận, số sự kiện tham gia). Có podium (vàng,
+    |                             | bạc, đồng), bảng xếp hạng, tìm kiếm.
+
+
+--------------------------------------------------------------------------------
+C. CẤU TRÚC DỮ LIỆU CHÍNH
+--------------------------------------------------------------------------------
+- Bảng events: Sự kiện (title, alias, description, num_envelopes, amount_type,
+  amount_fixed / amount_min / amount_max, status, add_time, edit_time, …).
+- Bảng participants: Người tham gia (event_id, userid, fullname, birthyear,
+  bank_account, bank_name, amount_received, join_time).
+- Bảng invites: Lời mời tham gia (dự phòng cho tương lai).
+
+
+--------------------------------------------------------------------------------
+D. URL / OP
+--------------------------------------------------------------------------------
+- Trang chủ:           ?nv=lixi
+- Tạo sự kiện:         ?nv=lixi&op=create
+- Tham gia:            ?nv=lixi&op=join&alias=<alias>
+- Chi tiết sự kiện:    ?nv=lixi&op=detail&alias=<alias>
+- Sự kiện của tôi:     ?nv=lixi&op=my_events
+- Lịch sử:             ?nv=lixi&op=history
+- Bảng xếp hạng:       ?nv=lixi&op=ranking
+
+
+--------------------------------------------------------------------------------
+E. YÊU CẦU HỆ THỐNG
+--------------------------------------------------------------------------------
+- NukeViet 4.x
+- PHP 7.0+
+- MySQL
+- Thành viên đăng nhập (cho Tạo sự kiện, Sự kiện của tôi, Lịch sử); Trang chủ,
+  Tham gia, Chi tiết, Bảng xếp hạng dùng được cho cả khách.
+
+================================================================================
+Hết tài liệu mô tả chức năng.
+================================================================================

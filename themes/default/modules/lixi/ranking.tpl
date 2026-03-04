@@ -5,11 +5,7 @@
             <div class="lixi-logo">
                 <span class="material-symbols-outlined">celebration</span>
             </div>
-            <h2 class="lixi-brand-text">NukeViet <span>{LANG.lixi_title}</span></h2>
-            <div class="lixi-search">
-                <span class="material-symbols-outlined">search</span>
-                <input type="text" placeholder="{LANG.search_events}" disabled>
-            </div>
+            <h2 class="lixi-brand-text">{LANG.lixi_title}</h2>
         </div>
         <div class="lixi-header-actions">
             <nav class="lixi-nav">
@@ -22,7 +18,10 @@
                 <span class="material-symbols-outlined" style="margin-right:0.5rem;font-size:1.125rem">add_circle</span>
                 {LANG.create_event}
             </a>
-            <a href="{USER_LINK}" title="Tài khoản"><img class="lixi-avatar" src="{USER_AVATAR}" alt="Avatar" width="40" height="40"></a>
+            <a class="lixi-balance-pill" href="{USER_LINK}" title="Tài khoản">
+                <span class="lixi-balance-amount">{USER_BALANCE}đ</span>
+                <img class="lixi-avatar" src="{USER_AVATAR}" alt="Avatar" width="28" height="28">
+            </a>
         </div>
     </header>
 
@@ -33,6 +32,18 @@
                 <div class="lixi-ranking-hero-left">
                     <h1 class="lixi-ranking-title">{LANG.ranking_top_earners}</h1>
                     <p class="lixi-ranking-desc">{LANG.ranking_desc}</p>
+                    <p class="lixi-ranking-current">{RANKING_FOR}</p>
+                    <!-- BEGIN: event_switch -->
+                    <div class="lixi-ranking-switch">
+                        <span class="lixi-ranking-filter-label">{LANG.ranking_event_filter_label}:</span>
+                        <select class="lixi-ranking-select" onchange="if(this.value){window.location=this.value;}">
+                            <option value="{FILTER_ALL.url}">{LANG.ranking_for_all}</option>
+                            <!-- BEGIN: loop -->
+                            <option value="{FILTER_EVENT.url}"{FILTER_EVENT.selected}>{FILTER_EVENT.title}</option>
+                            <!-- END: loop -->
+                        </select>
+                    </div>
+                    <!-- END: event_switch -->
                 </div>
                 <a href="{MENU.url_create}" class="lixi-ranking-btn-create">
                     <span class="material-symbols-outlined">add_circle</span>
@@ -87,17 +98,7 @@
                 <div class="lixi-ranking-table-controls">
                     <div class="lixi-ranking-search-wrap">
                         <span class="material-symbols-outlined">search</span>
-                        <input type="text" placeholder="{LANG.search_users}" disabled>
-                    </div>
-                    <div class="lixi-ranking-table-btns">
-                        <button type="button" class="lixi-ranking-btn-outline">
-                            <span class="material-symbols-outlined">filter_list</span>
-                            {LANG.filter}
-                        </button>
-                        <button type="button" class="lixi-ranking-btn-outline">
-                            <span class="material-symbols-outlined">download</span>
-                            {LANG.export}
-                        </button>
+                        <input id="lixi-rank-search" type="text" placeholder="{LANG.search_users}">
                     </div>
                 </div>
 
@@ -119,7 +120,7 @@
                                 <td>
                                     <div class="lixi-ranking-user-cell">
                                         <div class="lixi-ranking-row-avatar" style="{ROW.avatar_style}">{ROW.initial}</div>
-                                        <span class="lixi-ranking-row-name">{ROW.fullname}</span>
+                                        <span class="lixi-ranking-row-name lixi-ranking-name">{ROW.fullname}</span>
                                     </div>
                                 </td>
                                 <td><span class="lixi-ranking-row-amount">{ROW.total_fmt}đ</span></td>
@@ -171,4 +172,21 @@
         <p>© 2024 NukeViet CMS - {LANG.lixi_title}. Chúc bạn năm mới an khang thịnh vượng!</p>
     </footer>
 </div>
+
+<script>
+(function() {
+    var input = document.getElementById('lixi-rank-search');
+    var table = document.querySelector('.lixi-ranking-table');
+    if (!input || !table) return;
+    input.addEventListener('input', function() {
+        var q = (input.value || '').toLowerCase().trim();
+        var rows = table.querySelectorAll('tbody tr.lixi-ranking-row');
+        rows.forEach(function(tr) {
+            var name = tr.querySelector('.lixi-ranking-name');
+            var text = name ? (name.textContent || '').toLowerCase() : '';
+            tr.style.display = (!q || text.indexOf(q) !== -1) ? '' : 'none';
+        });
+    });
+})();
+</script>
 <!-- END: main -->
